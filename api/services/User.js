@@ -9,6 +9,8 @@ var Schema = mongoose.Schema;
 var schema = new Schema({
   name: String,
   email: [String],
+  image: String,
+  gender: String,
   contact: String,
   dob: Date,
   marriage: Date,
@@ -25,6 +27,9 @@ var schema = new Schema({
     index: true
   },
   proffesion: [String],
+  facebook: String,
+  google: String,
+  twitter: String,
   otp: String,
   timestamp: {
     type: Date,
