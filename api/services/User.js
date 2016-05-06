@@ -27,6 +27,7 @@ var schema = new Schema({
     index: true
   },
   proffesion: [String],
+  company: String,
   facebook: String,
   google: String,
   twitter: String,
