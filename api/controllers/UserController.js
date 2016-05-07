@@ -6,55 +6,84 @@
  */
 
 module.exports = {
-  save: function(req, res) {
-    if (req.body) {
-      User.saveData(req.body, function(err, data) {
-        if (err) {
-          res.json({
-            value: false,
-            data: err
-          });
+    save: function(req, res) {
+        if (req.body) {
+            User.saveData(req.body, function(err, data) {
+                if (err) {
+                    res.json({
+                        value: false,
+                        data: err
+                    });
+                } else {
+                    res.json({
+                        value: true,
+                        data: data
+                    });
+                }
+            });
         } else {
-          res.json({
-            value: true,
-            data: data
-          });
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
         }
-      });
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
-    }
-  },
-  getOne: function(req, res) {
-    if (req.body) {
-      if (req.body._id && req.body._id != "") {
-        User.getOne(req.body, function(err, data) {
-          if (err) {
+    },
+    getOne: function(req, res) {
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                User.getOne(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: data
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
             res.json({
-              value: false,
-              data: err
+                value: false,
+                data: "Invalid Call"
             });
-          } else {
+        }
+    },
+    getNumber: function(req, res) {
+        if (req.body) {
+            if (req.body.contact && req.body.contact != "") {
+                User.getNumber(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: data
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Params"
+                });
+            }
+        } else {
             res.json({
-              value: true,
-              data: data
+                value: false,
+                data: "Invalid Call"
             });
-          }
-        });
-      } else {
-        res.json({
-          value: false,
-          data: "Invalid Id"
-        });
-      }
-    } else {
-      res.json({
-        value: false,
-        data: "Invalid Call"
-      });
+        }
     }
-  }
 };

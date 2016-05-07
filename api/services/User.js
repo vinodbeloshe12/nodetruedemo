@@ -7,66 +7,91 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var schema = new Schema({
-  name: String,
-  email: [String],
-  image: String,
-  gender: String,
-  contact: String,
-  dob: Date,
-  marriage: Date,
-  url: String,
-  address: String,
-  contacts: {
-    type: [{
-      name: String,
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User'
-      }
-    }],
-    index: true
-  },
-  proffesion: [String],
-  company: String,
-  facebook: String,
-  google: String,
-  twitter: String,
-  otp: String,
-  timestamp: {
-    type: Date,
-    default: Date.now
-  }
+    name: String,
+    email: [String],
+    image: String,
+    gender: String,
+    contact: String,
+    dob: Date,
+    marriage: Date,
+    url: String,
+    address: String,
+    contacts: {
+        type: [{
+            name: String,
+            user: {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            }
+        }],
+        index: true
+    },
+    profession: [String],
+    company: String,
+    facebook: String,
+    google: String,
+    twitter: String,
+    otp: String,
+    timestamp: {
+        type: Date,
+        default: Date.now
+    }
 });
 module.exports = mongoose.model("User", schema);
 var model = {
-  saveData: function(data, callback) {
-    var user = this(data);
-    if (data._id) {
-      this.findOneAndUpdate({
-        _id: data._id
-      }, data, function(err, data2) {
-        if (err) {
-          console.log(err);
-          callback(err, null);
+    saveData: function(data, callback) {
+        var user = this(data);
+        if (data._id) {
+            this.findOneAndUpdate({
+                _id: data._id
+            }, data, function(err, data2) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    callback(null, data2);
+                }
+            });
         } else {
-          callback(null, data2);
+            user.save(function(err, data2) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    callback(null, data2);
+                }
+            });
         }
-      });
-    } else {
-      user.save(function(err, data2) {
-        if (err) {
-          console.log(err);
-          callback(err, null);
-        } else {
-          callback(null, data2);
-        }
-      });
-    }
-  },
-  getOne:function(data,callback){
-    User.findOne({
-      _id:data._id
-    }).populate("contacts.user").exec(callback);
-  }
+    },
+    getOne: function(data, callback) {
+        User.findOne({
+            _id: data._id
+        }).populate("contacts.user").exec(callback);
+    },
+
+    getNumber: function(data, callback) {
+        User.findOne({
+            contact: data.contact
+        }, function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                if (data2 == null) {
+                    User.saveData(data, function(err, data3) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            callback(err, data3);
+                        }
+                    });
+                    console.log("no data");
+                } else {
+                    callback(null, data2);
+                }
+            }
+        });
+    },
 };
 module.exports = _.assign(module.exports, model);
