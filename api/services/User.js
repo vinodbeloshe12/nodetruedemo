@@ -31,11 +31,19 @@ var schema = new Schema({
     facebook: String,
     google: String,
     twitter: String,
-    otp: String,
+    otp: {
+        type: String,
+        default: (Math.random() + "").substring(2, 8)
+    },
     timestamp: {
         type: Date,
         default: Date.now
-    }
+    },
+    creationDate: {
+        type: Date,
+        default: Date.now
+    },
+    ModificationDate: Date
 });
 module.exports = mongoose.model("User", schema);
 var model = {
@@ -78,6 +86,7 @@ var model = {
                 callback(err, null);
             } else {
                 if (data2 == null) {
+                    // console.log("no data");
                     User.saveData(data, function(err, data3) {
                         if (err) {
                             console.log(err);
@@ -86,10 +95,12 @@ var model = {
                             callback(err, data3);
                         }
                     });
-                    console.log("no data");
+
                 } else {
                     callback(null, data2);
                 }
+
+
             }
         });
     },

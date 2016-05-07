@@ -67,6 +67,9 @@ module.exports = {
                             data: err
                         });
                     } else {
+                      req.session.userId = data._id;
+                      // data.otp = (Math.random()+"").substring(2,8);
+                      console.log(req.session.userId);
                         res.json({
                             value: true,
                             data: data
