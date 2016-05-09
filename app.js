@@ -34,8 +34,6 @@ console.log("connected to test");
 }
 );
 
-
-
 // Ensure a "sails" can be located:
 (function() {
   var sails;

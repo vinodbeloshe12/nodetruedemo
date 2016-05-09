@@ -43,13 +43,14 @@ var schema = new Schema({
         type: Date,
         default: Date.now
     },
-    ModificationDate: Date
+    modificationDate: Date
 });
 module.exports = mongoose.model("User", schema);
 var model = {
     saveData: function(data, callback) {
         var user = this(data);
         if (data._id) {
+          data.modificationDate = new Date();
             this.findOneAndUpdate({
                 _id: data._id
             }, data, function(err, data2) {
@@ -61,6 +62,7 @@ var model = {
                 }
             });
         } else {
+        
             user.save(function(err, data2) {
                 if (err) {
                     console.log(err);
