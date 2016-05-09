@@ -69,6 +69,7 @@ module.exports = {
                     } else {
                       req.session.userId = data._id;
                       // data.otp = (Math.random()+"").substring(2,8);
+                      // data.modificationDate = Date();
                       console.log(req.session.userId);
                         res.json({
                             value: true,

@@ -62,7 +62,7 @@ var model = {
                 }
             });
         } else {
-        
+
             user.save(function(err, data2) {
                 if (err) {
                     console.log(err);
