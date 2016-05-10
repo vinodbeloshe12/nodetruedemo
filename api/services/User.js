@@ -42,6 +42,7 @@ var schema = new Schema({
     modificationDate: Date
 });
 module.exports = mongoose.model("User", schema);
+var Sample = mongoose.model("User", schema);
 var model = {
     saveData: function(data, callback) {
         var user = this(data);
@@ -58,7 +59,7 @@ var model = {
                 }
             });
         } else {
-            this.count({
+            this.findOne({
                 contact: data.contact
             }, function(err, found) {
                 if (err) {
@@ -66,23 +67,32 @@ var model = {
                     callback(err, null);
                 } else {
                     // callback(null, data2);
-                    if (found == 0) {
+                    if (_.isEmpty(found)) {
                         user.save(function(err, data2) {
                             if (err) {
                                 console.log(err);
                                 callback(err, null);
                             } else {
+                                // if (data.contacts && data.contacts.length > 0) {
+                                //     User.saveContacts(data, function(err, data3) {
+                                //         if (err) {
+                                //             console.log(err);
+                                //             callback(err, null);
+                                //         } else {
+                                //             callback(err, data3);
+                                //         }
+                                //     });
+                                // } else {
                                 callback(null, data2);
+                                // }
+
                             }
                         });
                     } else {
-                        callback(null, {
-                            message: "user exists"
-                        });
+                        callback(null, found);
                     }
                 }
             });
-
         }
     },
     getOne: function(data, callback) {
@@ -113,10 +123,35 @@ var model = {
                 } else {
                     callback(null, data2);
                 }
-
-
             }
         });
+    },
+
+    saveContacts: function(data, callback) {
+        if (data.contacts && data.contacts.length > 0) {
+            var i = 0;
+
+            function callme(num) {
+                var abc = data.contacts[num];
+                User.saveData(abc, function(err, data4) {
+                    num++;
+                    if (num == data.contacts.length) {
+                        callback(null, {
+                            message: "inserted contacts"
+                        })
+                    } else {
+                        callme(num);
+                    }
+
+                });
+            }
+            callme(0);
+
+        } else {
+            callback(null, {
+                message: "contacts not found"
+            })
+        }
     },
 };
 module.exports = _.assign(module.exports, model);

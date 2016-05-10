@@ -18,52 +18,77 @@ var d = new Date();
 d.setMinutes(d.getMinutes() - 10);
 module.exports = mongoose.model("Otp", schema);
 var model = {
-        saveData: function(data, callback) {
-            var otp = this(data);
-            otp.otp = (Math.random() + "").substring(2, 8);
-            otp.save(function(err, data2) {
-                if (err) {
-                    console.log(err);
-                    callback(err, null);
+    saveData: function(data, callback) {
+        var otp = this(data);
+        otp.otp = (Math.random() + "").substring(2, 8);
+        this.count({
+            contact: data.contact
+        }, function(err, found) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                // callback(null, data2);
+                if (found == 0) {
+                  otp.save(function(err, data2) {
+                      if (err) {
+                          console.log(err);
+                          callback(err, null);
+                      } else {
+                          callback(null, data2);
+                      }
+                  });
                 } else {
-                    callback(null, data2);
+                  data.timestamp = new Date();
+                  data.otp = (Math.random() + "").substring(2, 8);
+                  this.findOneAndUpdate({
+                      contact: data.contact
+                  }, data, function(err, data2) {
+                      if (err) {
+                          console.log(err);
+                          callback(err, null);
+                      } else {
+                          callback(null, data2);
+                      }
+                  });
                 }
-            });
+            }
+        });
         },
 
 
-        checkOtp: function(data, callback) {
-            Otp.findOne({
-                    contact: data.contact,
-                    otp: data.otp,
-                    timestamp: {
-                        $gte: d
-                    }
-                }, function(err, data2) {
-                    if (err) {
-                        console.log(err);
-                        callback(err, null);
-                    } else {
-                        if (data2 != null) {
-                            console.log("in data 2");
-                            console.log(data2.timestamp);
-                            User.saveData(data, function(err, data3) {
-                            if (err) {
-                                console.log(err);
-                                callback(err, null);
-                            } else {
-                                callback(err, data3);
-                            }
-                        });
-                            console.log("after save data");
-                    }
-                    else {
-                      console.log("not found");
-                      callback(null, {message:"user invalid"});
-                    }
-                    // callback(null, data2);
+    checkOtp: function(data, callback) {
+        Otp.findOne({
+            contact: data.contact,
+            otp: data.otp,
+            timestamp: {
+                $gte: d
+            }
+        }, function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                if (data2 != null) {
+                    console.log("in data 2");
+                    console.log(data2.timestamp);
+                    User.saveData(data, function(err, data3) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            callback(err, data3);
+                        }
+                    });
+                    console.log("after save data");
+                } else {
+                    callback(null, {
+                        message: "user invalid"
+                    });
                 }
-            });
+                // callback(null, data2);
+            }
+        });
     },
 };
 module.exports = _.assign(module.exports, model);

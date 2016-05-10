@@ -89,5 +89,43 @@ module.exports = {
                 data: "Invalid Call"
             });
         }
+    },
+
+    saveContacts: function(req, res) {
+      if (req.body) {
+        User.saveContacts(req.body, function(err, data) {
+          if (err) {
+            res.json({
+              value: false,
+              data: err
+            });
+          } else {
+            res.json({
+              value: true,
+              data: data
+            });
+          }
+        });
+      } else {
+        res.json({
+          value: false,
+          data: "Invalid Call"
+        });
+      }
+    },
+
+    getProfile: function(req, res){
+      if(req.session.user){
+        res.json({
+          value: true,
+          data: req.session.user
+        });
+      }
+      else {
+        res.json({
+          value: false,
+          data: {}
+        });
+      }
     }
 };

@@ -40,9 +40,11 @@ module.exports = {
                         });
                     } else {
                         if (data._id) {
+													req.session.user = data;
+													console.log(req.session.user);
                             res.json({
                                 value: true,
-                                data: data
+                                data: {message: "signup success"}
                             });
                         } else {
                             res.json({
