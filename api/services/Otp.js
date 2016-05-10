@@ -57,6 +57,10 @@ var model = {
                         });
                             console.log("after save data");
                     }
+                    else {
+                      console.log("not found");
+                      callback(null, {message:"user invalid"});
+                    }
                     // callback(null, data2);
                 }
             });

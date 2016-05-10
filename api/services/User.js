@@ -31,10 +31,6 @@ var schema = new Schema({
     facebook: String,
     google: String,
     twitter: String,
-    otp: {
-        type: String,
-        default: (Math.random() + "").substring(2, 8)
-    },
     timestamp: {
         type: Date,
         default: Date.now
@@ -50,7 +46,7 @@ var model = {
     saveData: function(data, callback) {
         var user = this(data);
         if (data._id) {
-          data.modificationDate = new Date();
+            data.modificationDate = new Date();
             this.findOneAndUpdate({
                 _id: data._id
             }, data, function(err, data2) {
@@ -62,15 +58,31 @@ var model = {
                 }
             });
         } else {
-
-            user.save(function(err, data2) {
+            this.count({
+                contact: data.contact
+            }, function(err, found) {
                 if (err) {
                     console.log(err);
                     callback(err, null);
                 } else {
-                    callback(null, data2);
+                    // callback(null, data2);
+                    if (found == 0) {
+                        user.save(function(err, data2) {
+                            if (err) {
+                                console.log(err);
+                                callback(err, null);
+                            } else {
+                                callback(null, data2);
+                            }
+                        });
+                    } else {
+                        callback(null, {
+                            message: "user exists"
+                        });
+                    }
                 }
             });
+
         }
     },
     getOne: function(data, callback) {
