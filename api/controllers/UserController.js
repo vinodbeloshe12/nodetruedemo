@@ -67,10 +67,10 @@ module.exports = {
                             data: err
                         });
                     } else {
-                      req.session.userId = data._id;
-                      // data.otp = (Math.random()+"").substring(2,8);
-                      // data.modificationDate = Date();
-                      console.log(req.session.userId);
+                        req.session.userId = data._id;
+                        // data.otp = (Math.random()+"").substring(2,8);
+                        // data.modificationDate = Date();
+                        console.log(req.session.userId);
                         res.json({
                             value: true,
                             data: data
@@ -92,40 +92,47 @@ module.exports = {
     },
 
     saveContacts: function(req, res) {
-      if (req.body) {
-        User.saveContacts(req.body, function(err, data) {
-          if (err) {
+        if (req.body) {
+            if (req.session.user) {
+                req.body._id = req.session.user._id;
+                User.saveContacts(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: data
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "User not logged in"
+                });
+            }
+        } else {
             res.json({
-              value: false,
-              data: err
+                value: false,
+                data: "Invalid Call"
             });
-          } else {
-            res.json({
-              value: true,
-              data: data
-            });
-          }
-        });
-      } else {
-        res.json({
-          value: false,
-          data: "Invalid Call"
-        });
-      }
+        }
     },
 
-    getProfile: function(req, res){
-      if(req.session.user){
-        res.json({
-          value: true,
-          data: req.session.user
-        });
-      }
-      else {
-        res.json({
-          value: false,
-          data: {}
-        });
-      }
+    getProfile: function(req, res) {
+        if (req.session.user) {
+            res.json({
+                value: true,
+                data: req.session.user
+            });
+        } else {
+            res.json({
+                value: false,
+                data: {}
+            });
+        }
     }
 };

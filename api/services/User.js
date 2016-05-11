@@ -130,15 +130,34 @@ var model = {
     saveContacts: function(data, callback) {
         if (data.contacts && data.contacts.length > 0) {
             var i = 0;
+            var contactarr = [];
 
             function callme(num) {
                 var abc = data.contacts[num];
                 User.saveData(abc, function(err, data4) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        contactarr.push({
+                            name: data4.name,
+                            user: data4._id
+                        });
+                    }
                     num++;
                     if (num == data.contacts.length) {
-                        callback(null, {
-                            message: "inserted contacts"
-                        })
+                        User.saveData({
+                            _id: data._id,
+                            contacts: contactarr
+                        }, function(err, saveres) {
+                            if (err) {
+                                console.log(err);
+                                callback(err, null);
+                            } else {
+                                callback(null, {
+                                    message: "inserted contacts"
+                                });
+                            }
+                        });
                     } else {
                         callme(num);
                     }

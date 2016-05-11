@@ -35,9 +35,8 @@ var model = {
                             console.log(err);
                             callback(err, null);
                         } else {
-                            data._id = "";
-                            data.otp = "";
-                            callback(null, data2);
+
+                            callback(null, {message: "OTP generated"});
 
                         }
                     });
@@ -51,9 +50,8 @@ var model = {
                             console.log(err);
                             callback(err, null);
                         } else {
-                            data._id = "";
-                            data.otp = "";
-                            callback(null, data2);
+
+                            callback(null, {message: "OTP generated"});
                         }
                     });
                 }
