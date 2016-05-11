@@ -57,39 +57,6 @@ module.exports = {
             });
         }
     },
-    getNumber: function(req, res) {
-        if (req.body) {
-            if (req.body.contact && req.body.contact != "") {
-                User.getNumber(req.body, function(err, data) {
-                    if (err) {
-                        res.json({
-                            value: false,
-                            data: err
-                        });
-                    } else {
-                        req.session.userId = data._id;
-                        // data.otp = (Math.random()+"").substring(2,8);
-                        // data.modificationDate = Date();
-                        console.log(req.session.userId);
-                        res.json({
-                            value: true,
-                            data: data
-                        });
-                    }
-                });
-            } else {
-                res.json({
-                    value: false,
-                    data: "Invalid Params"
-                });
-            }
-        } else {
-            res.json({
-                value: false,
-                data: "Invalid Call"
-            });
-        }
-    },
 
     saveContacts: function(req, res) {
         if (req.body) {
@@ -150,5 +117,36 @@ module.exports = {
             });
         }
       });
-    }
+    },
+
+    editProfile: function(req, res) {
+        if (req.body) {
+            if (req.session.user) {
+                req.body._id = req.session.user._id;
+                User.editProfile(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: data
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "User not logged in"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
+    },
 };

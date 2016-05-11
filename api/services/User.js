@@ -46,42 +46,28 @@ var Sample = mongoose.model("User", schema);
 var model = {
     saveData: function(data, callback) {
         var user = this(data);
-        if (data._id) {
-            data.modificationDate = new Date();
-            this.findOneAndUpdate({
-                _id: data._id
-            }, data, function(err, data2) {
-                if (err) {
-                    console.log(err);
-                    callback(err, null);
+        this.findOne({
+            contact: data.contact
+        }, function(err, found) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                // callback(null, data2);
+                if (_.isEmpty(found)) {
+                    user.save(function(err, data2) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            callback(null, data2);
+                        }
+                    });
                 } else {
-                    callback(null, data2);
+                    callback(null, found);
                 }
-            });
-        } else {
-            this.findOne({
-                contact: data.contact
-            }, function(err, found) {
-                if (err) {
-                    console.log(err);
-                    callback(err, null);
-                } else {
-                    // callback(null, data2);
-                    if (_.isEmpty(found)) {
-                        user.save(function(err, data2) {
-                            if (err) {
-                                console.log(err);
-                                callback(err, null);
-                            } else {
-                                callback(null, data2);
-                            }
-                        });
-                    } else {
-                        callback(null, found);
-                    }
-                }
-            });
-        }
+            }
+        });
     },
     getOne: function(data, callback) {
         User.findOne({
@@ -89,31 +75,6 @@ var model = {
         }).populate("contacts.user").exec(callback);
     },
 
-    getNumber: function(data, callback) {
-        User.findOne({
-            contact: data.contact
-        }, function(err, data2) {
-            if (err) {
-                console.log(err);
-                callback(err, null);
-            } else {
-                if (data2 == null) {
-                    // console.log("no data");
-                    User.saveData(data, function(err, data3) {
-                        if (err) {
-                            console.log(err);
-                            callback(err, null);
-                        } else {
-                            callback(err, data3);
-                        }
-                    });
-
-                } else {
-                    callback(null, data2);
-                }
-            }
-        });
-    },
 
     saveContacts: function(data, callback) {
         if (data.contacts && data.contacts.length > 0) {
@@ -133,7 +94,7 @@ var model = {
                     }
                     num++;
                     if (num == data.contacts.length) {
-                        User.saveData({
+                        User.editProfile({
                             _id: data._id,
                             contacts: contactarr
                         }, function(err, saveres) {
@@ -160,5 +121,23 @@ var model = {
             })
         }
     },
+
+    editProfile: function(data, callback) {
+      delete data.contact;
+        data.modificationDate = new Date();
+        this.findOneAndUpdate({
+            _id: data._id
+        }, data, function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, {
+                    message: "user updated"
+                });
+                // callback(null, data2);
+            }
+        });
+    }
 };
 module.exports = _.assign(module.exports, model);
