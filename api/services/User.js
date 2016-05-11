@@ -73,19 +73,7 @@ var model = {
                                 console.log(err);
                                 callback(err, null);
                             } else {
-                                // if (data.contacts && data.contacts.length > 0) {
-                                //     User.saveContacts(data, function(err, data3) {
-                                //         if (err) {
-                                //             console.log(err);
-                                //             callback(err, null);
-                                //         } else {
-                                //             callback(err, data3);
-                                //         }
-                                //     });
-                                // } else {
                                 callback(null, data2);
-                                // }
-
                             }
                         });
                     } else {
@@ -154,7 +142,7 @@ var model = {
                                 callback(err, null);
                             } else {
                                 callback(null, {
-                                    message: "inserted contacts"
+                                    message: "contacts inserted"
                                 });
                             }
                         });

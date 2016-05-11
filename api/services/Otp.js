@@ -51,7 +51,7 @@ var model = {
                             callback(err, null);
                         } else {
 
-                            callback(null, {message: "OTP generated"});
+                            callback(null, {message: "OTP updated"});
                         }
                     });
                 }
@@ -73,8 +73,6 @@ var model = {
                 callback(err, null);
             } else {
                 if (data2 != null) {
-                    console.log("in data 2");
-                    console.log(data2.timestamp);
                     User.saveData(data, function(err, data3) {
                         if (err) {
                             console.log(err);
@@ -83,7 +81,7 @@ var model = {
                             callback(err, data3);
                         }
                     });
-                    console.log("after save data");
+
                 } else {
                     callback(null, {
                         message: "user invalid"
