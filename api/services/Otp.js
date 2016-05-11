@@ -30,31 +30,36 @@ var model = {
             } else {
                 // callback(null, data2);
                 if (found == 0) {
-                  otp.save(function(err, data2) {
-                      if (err) {
-                          console.log(err);
-                          callback(err, null);
-                      } else {
-                          callback(null, data2);
-                      }
-                  });
+                    otp.save(function(err, data2) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            data._id = "";
+                            data.otp = "";
+                            callback(null, data2);
+
+                        }
+                    });
                 } else {
-                  data.timestamp = new Date();
-                  data.otp = (Math.random() + "").substring(2, 8);
-                  this.findOneAndUpdate({
-                      contact: data.contact
-                  }, data, function(err, data2) {
-                      if (err) {
-                          console.log(err);
-                          callback(err, null);
-                      } else {
-                          callback(null, data2);
-                      }
-                  });
+                    data.timestamp = new Date();
+                    data.otp = (Math.random() + "").substring(2, 8);
+                    this.findOneAndUpdate({
+                        contact: data.contact
+                    }, data, function(err, data2) {
+                        if (err) {
+                            console.log(err);
+                            callback(err, null);
+                        } else {
+                            data._id = "";
+                            data.otp = "";
+                            callback(null, data2);
+                        }
+                    });
                 }
             }
         });
-        },
+    },
 
 
     checkOtp: function(data, callback) {
