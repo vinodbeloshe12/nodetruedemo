@@ -134,5 +134,21 @@ module.exports = {
                 data: {}
             });
         }
+    },
+
+    logout: function(req, res){
+      req.session.destroy(function(err) {
+        if (err) {
+            res.json({
+                value: false,
+                data: err
+            });
+        } else {
+            res.json({
+                value: true,
+                data: {}
+            });
+        }
+      });
     }
 };
