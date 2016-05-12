@@ -84,7 +84,7 @@ var model = {
 
                 } else {
                     callback(null, {
-                        message: "user invalid"
+                        message: "invalid OTP"
                     });
                 }
                 // callback(null, data2);

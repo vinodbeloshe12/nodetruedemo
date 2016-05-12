@@ -72,7 +72,31 @@ var model = {
     getOne: function(data, callback) {
         User.findOne({
             _id: data._id
-        }).populate("contacts.user").exec(callback);
+        }).populate("contacts.user").lean().exec(function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                // console.log(data2);
+                _.each(data2.contacts, function(a) {
+                    // console.log(a.user);
+                    var dt = a.user;
+                     console.log(dt);
+
+                    // if (dt && dt.length > 0) {
+                    //     User.populate(dt.user).exec(function(err, data3) {
+                    //         if (err) {
+                    //             console.log(err);
+                    //         } else {
+                    //             console.log(data3);
+                    //             // callback(null ,data3);
+                    //         }
+                    //     });
+                    // }
+                });
+
+            }
+        });
     },
 
 
