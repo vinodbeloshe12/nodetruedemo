@@ -122,8 +122,58 @@ var model = {
         }
     },
 
+
+    syncContacts: function(data, callback) {
+        if (data.contacts && data.contacts.length > 0) {
+            var i = 0;
+            var contactarr = [];
+
+            function callme(num) {
+                var abc = data.contacts[num];
+                User.findOne({
+                    contact: abc.contact,
+                    modificationDate: {
+                        $gt: new Date(abc.modificationDate)
+                    }
+                }, function(err, found) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        if (_.isEmpty(found)) {
+                            num++;
+                            if (num == data.contacts.length) {
+
+                                callback(null, contactarr);
+
+                            } else {
+                                callme(num);
+                            }
+                        } else {
+                            contactarr.push(found);
+                            num++;
+                            if (num == data.contacts.length) {
+
+                                callback(null, contactarr);
+
+                            } else {
+                                callme(num);
+                            }
+                        }
+                    }
+
+                });
+            }
+            callme(0);
+
+        } else {
+            callback(null, {
+                message: "contacts not found"
+            })
+        }
+    },
+
     editProfile: function(data, callback) {
-      delete data.contact;
+        delete data.contact;
         data.modificationDate = new Date();
         this.findOneAndUpdate({
             _id: data._id
