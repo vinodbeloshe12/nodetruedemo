@@ -118,13 +118,21 @@ var model = {
             } else {
                 _.each(data2.contacts, function(a) {
                     var dt = a.user;
-                    _.each(dt.contacts, function(b) {
+                    // _.each(dt.contacts, function(b) {
+                    //     User.findOne({
+                    //         _id: b.user
+                    //     }).populate("b.user").lean().exec(function(err, result) {
+                    //         console.log(result);
+                    //                               });
+                    // });
+                    _.map(dt.contacts, function(b) {
                         User.findOne({
                             _id: b.user
                         }).populate("b.user").lean().exec(function(err, result) {
+
                             console.log(result);
-                            // callback(null, result);
-                        });
+                            return result;
+                                                  });
                     });
                     callback(null, data2);
                 });

@@ -84,7 +84,7 @@ var model = {
 
                 } else {
                     callback(null, {
-                        message: "invalid OTP"
+                        message: "OTP expired"
                     });
                 }
                 // callback(null, data2);
