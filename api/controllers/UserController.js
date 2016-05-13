@@ -58,6 +58,35 @@ module.exports = {
         }
     },
 
+    getSearch: function(req, res) {
+        if (req.body) {
+            if (req.body._id && req.body._id != "") {
+                User.getSearch(req.body, function(err, data) {
+                    if (err) {
+                        res.json({
+                            value: false,
+                            data: err
+                        });
+                    } else {
+                        res.json({
+                            value: true,
+                            data: data
+                        });
+                    }
+                });
+            } else {
+                res.json({
+                    value: false,
+                    data: "Invalid Id"
+                });
+            }
+        } else {
+            res.json({
+                value: false,
+                data: "Invalid Call"
+            });
+        }
+    },
     saveContacts: function(req, res) {
         if (req.body) {
             if (req.session.user) {
@@ -134,20 +163,20 @@ module.exports = {
         }
     },
 
-    logout: function(req, res){
-      req.session.destroy(function(err) {
-        if (err) {
-            res.json({
-                value: false,
-                data: err
-            });
-        } else {
-            res.json({
-                value: true,
-                data: {}
-            });
-        }
-      });
+    logout: function(req, res) {
+        req.session.destroy(function(err) {
+            if (err) {
+                res.json({
+                    value: false,
+                    data: err
+                });
+            } else {
+                res.json({
+                    value: true,
+                    data: {}
+                });
+            }
+        });
     },
 
     editProfile: function(req, res) {

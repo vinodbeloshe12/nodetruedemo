@@ -81,22 +81,56 @@ var model = {
                 _.each(data2.contacts, function(a) {
                     // console.log(a.user);
                     var dt = a.user;
-                     console.log(dt);
+                    //  console.log(dt.contacts);
 
-                    // if (dt && dt.length > 0) {
-                    //     User.populate(dt.user).exec(function(err, data3) {
-                    //         if (err) {
-                    //             console.log(err);
-                    //         } else {
-                    //             console.log(data3);
-                    //             // callback(null ,data3);
-                    //         }
-                    //     });
-                    // }
+                    // if (dt.contacts && dt.contacts.length > 0) {
+                    //     _.each(dt.contacts, function(b) {
+                    //
+                    //             console.log("in contacts");
+                    //             console.log(b.user);
+                    //
+                    //               // console.log(b.contacts.user);
+                    //                 User.populate('b.user').lean().exec(function(err, data3) {
+                    //                     if (err) {
+                    //                         console.log(err);
+                    //                     } else {
+                    //                         console.log(data3);
+                    //                         // callback(null ,data3);
+                    //                     }
+                    //                 });
+                    //
+                    //         });
+                    //     }
                 });
 
             }
         });
+    },
+
+
+    getSearch: function(data, callback) {
+        User.findOne({
+            _id: data._id
+        }).populate("contacts.user").lean().exec(function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                _.each(data2.contacts, function(a) {
+                    var dt = a.user;
+                    _.each(dt.contacts, function(b) {
+                        User.findOne({
+                            _id: b.user
+                        }).populate("b.user").lean().exec(function(err, result) {
+                            console.log(result);
+                            // callback(null, result);
+                        });
+                    });
+                    callback(null, data2);
+                });
+            }
+        });
+
     },
 
 
