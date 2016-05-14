@@ -60,7 +60,7 @@ module.exports = {
 
     getSearch: function(req, res) {
         if (req.body) {
-            if (req.body._id && req.body._id != "") {
+            if (req.body._id && req.body._id != "" && req.body.search && req.body.search != "") {
                 User.getSearch(req.body, function(err, data) {
                     if (err) {
                         res.json({
@@ -77,7 +77,7 @@ module.exports = {
             } else {
                 res.json({
                     value: false,
-                    data: "Invalid Id"
+                    data: "Invalid Params"
                 });
             }
         } else {

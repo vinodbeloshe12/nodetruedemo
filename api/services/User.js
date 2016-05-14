@@ -5,6 +5,7 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 var mongoose = require("mongoose");
+var lodash = require("lodash");
 var Schema = mongoose.Schema;
 var schema = new Schema({
     name: String,
@@ -69,79 +70,81 @@ var model = {
             }
         });
     },
-    getOne: function(data, callback) {
-        User.findOne({
-            _id: data._id
-        }).populate("contacts.user").lean().exec(function(err, data2) {
-            if (err) {
-                console.log(err);
-                callback(err, null);
-            } else {
-                // console.log(data2);
-                _.each(data2.contacts, function(a) {
-                    // console.log(a.user);
-                    var dt = a.user;
-                    //  console.log(dt.contacts);
-
-                    // if (dt.contacts && dt.contacts.length > 0) {
-                    //     _.each(dt.contacts, function(b) {
-                    //
-                    //             console.log("in contacts");
-                    //             console.log(b.user);
-                    //
-                    //               // console.log(b.contacts.user);
-                    //                 User.populate('b.user').lean().exec(function(err, data3) {
-                    //                     if (err) {
-                    //                         console.log(err);
-                    //                     } else {
-                    //                         console.log(data3);
-                    //                         // callback(null ,data3);
-                    //                     }
-                    //                 });
-                    //
-                    //         });
-                    //     }
-                });
-
-            }
-        });
-    },
-
-
     getSearch: function(data, callback) {
+        var resultArr = [];
+        var i = 0;
         User.findOne({
-            _id: data._id
+            _id: data._id,
+            contacts: {
+                $exists: true
+            }
         }).populate("contacts.user").lean().exec(function(err, data2) {
             if (err) {
                 console.log(err);
                 callback(err, null);
             } else {
-                _.each(data2.contacts, function(a) {
-                    var dt = a.user;
-                    // _.each(dt.contacts, function(b) {
-                    //     User.findOne({
-                    //         _id: b.user
-                    //     }).populate("b.user").lean().exec(function(err, result) {
-                    //         console.log(result);
-                    //                               });
-                    // });
-                    _.map(dt.contacts, function(b) {
-                        User.findOne({
-                            _id: b.user
-                        }).populate("b.user").lean().exec(function(err, result) {
-
-                            console.log(result);
-                            return result;
-                                                  });
+                if (data2.contacts && data2.contacts.length > 0) {
+                    _.each(data2.contacts, function(a) {
+                        i++;
+                        if (a.user.profession && a.user.profession == data.search) {
+                            var index = lodash.findIndex(resultArr, function(z) {
+                                return z._id == a.user._id;
+                            });
+                            if (index == -1) {
+                                if (a.user._id != data._id) {
+                                    resultArr.push(a.user);
+                                }
+                            }
+                        }
+                        if (a.user.contacts && a.user.contacts.length > 0) {
+                            function myCall(num) {
+                                var b = a.user.contacts[num];
+                                User.findOne({
+                                    _id: b.user,
+                                    profession: data.search
+                                }).lean().exec(function(err, result) {
+                                    if (err) {
+                                        console.log(err);
+                                    } else {
+                                        if (result && result._id) {
+                                            var index = lodash.findIndex(resultArr, function(z) {
+                                                return z._id == result._id;
+                                            });
+                                            if (index == -1) {
+                                                if (result._id != data._id) {
+                                                    resultArr.push(result);
+                                                }
+                                            }
+                                            num++;
+                                            if (num == a.user.contacts.length) {
+                                                if (i == data2.contacts.length) {
+                                                    callback(null, resultArr);
+                                                }
+                                            } else {
+                                                myCall(num);
+                                            }
+                                        } else {
+                                            num++;
+                                            if (num == a.user.contacts.length) {
+                                                if (i == data2.contacts.length) {
+                                                    callback(null, resultArr);
+                                                }
+                                            } else {
+                                                myCall(num);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                            myCall(0);
+                        }
                     });
-                    callback(null, data2);
-                });
+                } else {
+                    callback(null, result);
+                }
             }
         });
-
     },
-
-
     saveContacts: function(data, callback) {
         if (data.contacts && data.contacts.length > 0) {
             var i = 0;
