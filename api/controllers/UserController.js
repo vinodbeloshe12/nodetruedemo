@@ -98,10 +98,20 @@ module.exports = {
                             data: err
                         });
                     } else {
-                        res.json({
-                            value: true,
-                            data: data
-                        });
+                        if (data._id) {
+                            req.session.user = data;
+                            res.json({
+                                value: true,
+                                data: {
+                                    message: "contacts inserted"
+                                }
+                            });
+                        } else {
+                            res.json({
+                                value: false,
+                                data: data
+                            });
+                        }
                     }
                 });
             } else {
@@ -190,9 +200,12 @@ module.exports = {
                             data: err
                         });
                     } else {
+                        req.session.user = data;
                         res.json({
                             value: true,
-                            data: data
+                            data: {
+                                message: "user updated"
+                            }
                         });
                     }
                 });

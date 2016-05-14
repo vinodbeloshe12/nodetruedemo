@@ -27,7 +27,7 @@ var schema = new Schema({
         }],
         index: true
     },
-    profession: [String],
+    profession: String,
     company: String,
     facebook: String,
     google: String,
@@ -83,7 +83,8 @@ var model = {
                 console.log(err);
                 callback(err, null);
             } else {
-                if (data2.contacts && data2.contacts.length > 0) {
+
+                if (data2 && data2.contacts && data2.contacts.length > 0) {
                     _.each(data2.contacts, function(a) {
                         i++;
                         if (a.user.profession && a.user.profession == data.search) {
@@ -137,6 +138,10 @@ var model = {
                                 });
                             }
                             myCall(0);
+                        } else {
+                            if (i == data2.contacts.length) {
+                                callback(null, resultArr);
+                            }
                         }
                     });
                 } else {
@@ -171,8 +176,17 @@ var model = {
                                 console.log(err);
                                 callback(err, null);
                             } else {
-                                callback(null, {
-                                    message: "contacts inserted"
+                                // callback(null, contactarr);
+                                User.getSession({
+                                    _id: data._id
+                                }, function(sess) {
+                                    if (!sess.value) {
+                                        callback(null, sess);
+                                    } else {
+                                        callback(null, {
+                                            message: "user no"
+                                        })
+                                    }
                                 });
                             }
                         });
@@ -183,7 +197,6 @@ var model = {
                 });
             }
             callme(0);
-
         } else {
             callback(null, {
                 message: "contacts not found"
@@ -242,6 +255,7 @@ var model = {
     },
 
     editProfile: function(data, callback) {
+        var contactno = data.contact;
         delete data.contact;
         data.modificationDate = new Date();
         this.findOneAndUpdate({
@@ -251,12 +265,28 @@ var model = {
                 console.log(err);
                 callback(err, null);
             } else {
-                callback(null, {
-                    message: "user updated"
-                });
-                // callback(null, data2);
+                // callback(null, {
+                //     message: "user updated"
+                // });
+                data.contact = contactno;
+                callback(null, data);
             }
         });
-    }
+    },
+
+    getSession: function(data, callback) {
+        User.findOne({
+            _id: data._id
+        }, function(err, res) {
+            if (err) {
+                console.log(err);
+                callback({
+                    value: false
+                });
+            } else {
+                callback(res);
+            }
+        });
+    },
 };
 module.exports = _.assign(module.exports, model);
