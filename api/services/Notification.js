@@ -38,8 +38,8 @@ var model = {
         async.parallel([
             function(callback) {
                 Notification.find({
-                    from: data.user,
-                    status: "Pending"
+                    from: data.user
+                    // status: "Pending"
                 }, function(err, data2) {
                     if (err) {
                         console.log(err);
@@ -56,8 +56,8 @@ var model = {
             },
             function(callback) {
                 Notification.find({
-                    to: data.user,
-                    status: "Pending"
+                    to: data.user
+                    // status: "Pending"
                 }, function(err, data2) {
                     if (err) {
                         console.log(err);
@@ -78,6 +78,20 @@ var model = {
                 callback(err, null);
             } else {
                 callback(null, returns);
+            }
+        });
+    },
+
+    editNotifications: function(data, callback) {
+        data.timestamp = new Date();
+        this.findOneAndUpdate({
+            _id: data._id
+        }, data, function(err, data2) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, data);
             }
         });
     },
