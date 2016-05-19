@@ -166,30 +166,35 @@ var model = {
                             user: data4._id
                         });
                     }
+
                     num++;
                     if (num == data.contacts.length) {
                         User.editProfile({
-                            _id: data._id,
-                            contacts: contactarr
-                        }, function(err, saveres) {
-                            if (err) {
-                                console.log(err);
-                                callback(err, null);
-                            } else {
-                                // callback(null, contactarr);
-                                User.getSession({
-                                    _id: data._id
-                                }, function(sess) {
-                                    if (!sess.value) {
-                                        callback(null, sess);
-                                    } else {
-                                        callback(null, {
-                                            message: "user no"
-                                        })
-                                    }
-                                });
-                            }
-                        });
+                                _id: data._id,
+                                $push: {
+                                    contacts: contactarr
+                                }
+                                // contacts: contactarr
+                            },
+                            function(err, saveres) {
+                                if (err) {
+                                    console.log(err);
+                                    callback(err, null);
+                                } else {
+                                    // callback(null, contactarr);
+                                    User.getSession({
+                                        _id: data._id
+                                    }, function(sess) {
+                                        if (!sess.value) {
+                                            callback(null, sess);
+                                        } else {
+                                            callback(null, {
+                                                message: "user no"
+                                            })
+                                        }
+                                    });
+                                }
+                            });
                     } else {
                         callme(num);
                     }
