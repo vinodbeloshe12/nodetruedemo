@@ -11,7 +11,10 @@ var schema = new Schema({
     type: String,
     user: String,
     user2: String,
-    status: String,
+    status: {
+        type: String,
+        default: "Pending"
+    },
     timestamp: {
         type: Date,
         default: Date.now
@@ -33,15 +36,20 @@ var model = {
     },
     getAll: function(data, callback) {
         this.find({
-            user: data.user
-        }, function(err, data) {
-            if (err) {
-                console.log(err);
-                callback(err, null);
-            } else {
-                callback(null, data);
-            }
-        });
+                $or: [{
+                    user: data.user
+                }, {
+                    user2: data.user
+                }]
+            },
+            function(err, data) {
+                if (err) {
+                    console.log(err);
+                    callback(err, null);
+                } else {
+                    callback(null, data);
+                }
+            });
     },
 };
 module.exports = _.assign(module.exports, model);
