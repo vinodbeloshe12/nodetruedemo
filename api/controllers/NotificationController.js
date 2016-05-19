@@ -9,7 +9,7 @@ module.exports = {
     save: function(req, res) {
         if (req.body) {
             if (req.session.user) {
-							 req.body.user = req.session.user._id;
+							 req.body.from = req.session.user._id;
                 Notification.saveData(req.body, function(err, data) {
                     if (err) {
                         res.json({

@@ -166,15 +166,17 @@ var model = {
                             user: data4._id
                         });
                     }
-
                     num++;
                     if (num == data.contacts.length) {
                         User.editProfile({
                                 _id: data._id,
-                                $push: {
-                                    contacts: contactarr
-                                }
-                                // contacts: contactarr
+                                // $push: {
+                                //     contacts: contactarr
+                                // }
+                                // $addToSet: {
+                                //     contacts: 'asddd'
+                                // }
+                                contacts: contactarr
                             },
                             function(err, saveres) {
                                 if (err) {
@@ -198,7 +200,6 @@ var model = {
                     } else {
                         callme(num);
                     }
-
                 });
             }
             callme(0);

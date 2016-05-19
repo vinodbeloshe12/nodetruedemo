@@ -8,13 +8,9 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var schema = new Schema({
-    type: String,
-    user: String,
-    user2: String,
-    status: {
-        type: String,
-        default: "Pending"
-    },
+    from: String,
+    to: String,
+    status: String,
     timestamp: {
         type: Date,
         default: Date.now
@@ -25,6 +21,7 @@ module.exports = mongoose.model("Notification", schema);
 var model = {
     saveData: function(data, callback) {
         var notification = this(data);
+        notification.status = "Pending";
         notification.save(function(err, data) {
             if (err) {
                 console.log(err);
@@ -35,21 +32,54 @@ var model = {
         });
     },
     getAll: function(data, callback) {
-        this.find({
-                $or: [{
-                    user: data.user
-                }, {
-                    user2: data.user
-                }]
+        var returns = {};
+        returns.send = [];
+        returns.recieve = [];
+        async.parallel([
+            function(callback) {
+                Notification.find({
+                    from: data.user,
+                    status: "Pending"
+                }, function(err, data2) {
+                    if (err) {
+                        console.log(err);
+                        callback(err, null);
+                    } else {
+                        if (data2 && data2.length > 0) {
+                            returns.send = data2;
+                            callback(null, returns);
+                        } else {
+                            callback(null, returns);
+                        }
+                    }
+                });
             },
-            function(err, data) {
-                if (err) {
-                    console.log(err);
-                    callback(err, null);
-                } else {
-                    callback(null, data);
-                }
-            });
+            function(callback) {
+                Notification.find({
+                    to: data.user,
+                    status: "Pending"
+                }, function(err, data2) {
+                    if (err) {
+                        console.log(err);
+                        callback(err, null);
+                    } else {
+                        if (data2 && data2.length > 0) {
+                            returns.recieve = data2;
+                            callback(null, returns);
+                        } else {
+                            callback(null, returns);
+                        }
+                    }
+                });
+            }
+        ], function(err, data3) {
+            if (err) {
+                console.log(err);
+                callback(err, null);
+            } else {
+                callback(null, returns);
+            }
+        });
     },
 };
 module.exports = _.assign(module.exports, model);
